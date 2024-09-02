@@ -2,6 +2,7 @@
 #include "ros2_i2ccpp/impl/i2c_handler_impl.hpp"
 #include <memory>
 #include <mutex>
+#include <algorithm>
 
 namespace ros2_i2ccpp
 {
@@ -43,29 +44,36 @@ bool I2CHandler<Mutex>::has_functionality(uint64_t flag) const
 }
 
 template<typename Mutex>
-template<typename PODType>
-PODType I2CHandler<Mutex>::read_data(uint16_t address, uint16_t offset) const
-{
-  std::scoped_lock{mut};
-  PODType pod{};
-
-  return pod;
-}
-
-template<typename Mutex>
-template<typename PODType>
-void I2CHandler<Mutex>::write_data(uint16_t address, uint16_t offset, const PODType & data) const
-{
-  std::scoped_lock{mut};
-
-}
-
-template<typename Mutex>
 void I2CHandler<Mutex>::set_pec(bool enable)
 {
   std::scoped_lock{mut};
   handler->set_pec(enable);
 }
 
+template<typename Mutex>
+void I2CHandler<Mutex>::apply_transaction(I2CTransaction && transaction_) const
+{
+  std::scoped_lock{mut};
+
+  auto transaction = std::move(transaction_);
+
+  std::pmr::vector<i2c_msg> inner_buf{&transaction.getMemoryResource()};
+
+  // build i2c message buffer from transaction segments
+  std::transform(
+  transaction.getSegments().begin(), transaction.getSegments().end(), std::back_inserter(inner_buf),
+    [](const std::shared_ptr<I2CTransactionSegment> & segment) {
+      return i2c_msg{segment->get_address(), segment->get_message_flags(), segment->get_data_size(),
+        segment->get_data()};
+  });
+
+  // ship i2c transaction
+  handler->process_i2c_transaction(inner_buf);
+
+  // the transaction should now be destroyed
+}
+
+template class I2CHandler<std::mutex>;
+template class I2CHandler<null_mutex>;
 
 }

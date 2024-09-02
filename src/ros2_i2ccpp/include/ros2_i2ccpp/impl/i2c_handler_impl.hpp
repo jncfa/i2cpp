@@ -40,29 +40,29 @@ public:
   }
 
 
-  [[nodiscard]] std::byte read_byte() const;
-  [[nodiscard]] inline std::byte read_byte(uint16_t i2c_addr)
+  [[nodiscard]] uint8_t read_byte() const;
+  [[nodiscard]] inline uint8_t read_byte(const uint16_t i2c_addr)
   {
     set_i2c_device(i2c_addr);
     return read_byte();
   }
 
-  void write_byte(std::byte value) const;
-  inline void write_byte(uint16_t i2c_addr, std::byte value)
+  void write_byte(uint8_t value) const;
+  inline void write_byte(uint16_t i2c_addr, uint8_t value)
   {
     set_i2c_device(i2c_addr);
     write_byte(value);
   }
 
-  [[nodiscard]] std::byte read_byte_at(uint16_t register_addr) const;
-  [[nodiscard]] inline std::byte read_byte_at(uint16_t i2c_addr, uint16_t register_addr)
+  [[nodiscard]] uint8_t read_byte_at(uint16_t register_addr) const;
+  [[nodiscard]] inline uint8_t read_byte_at(uint16_t i2c_addr, uint16_t register_addr)
   {
     set_i2c_device(i2c_addr);
     return read_byte_at(register_addr);
   }
 
-  void write_byte_at(uint16_t register_addr, std::byte value) const;
-  inline void write_byte_at(uint16_t i2c_addr, uint16_t register_addr, std::byte value)
+  void write_byte_at(uint16_t register_addr, uint8_t value) const;
+  inline void write_byte_at(uint16_t i2c_addr, uint16_t register_addr, uint8_t value)
   {
     set_i2c_device(i2c_addr);
     write_byte_at(register_addr, value);
@@ -93,18 +93,18 @@ public:
 
   [[nodiscard]] uint16_t block_process_call(
     uint16_t register_addr,
-    std::vector<std::byte> & value) const;
+    std::vector<uint8_t> & value) const;
 
   [[nodiscard]] inline uint16_t block_process_call(
     uint16_t i2c_addr, uint16_t register_addr,
-    std::vector<std::byte> & value)
+    std::vector<uint8_t> & value)
   {
     set_i2c_device(i2c_addr);
     return block_process_call(register_addr, value);
   }
 
-  [[nodiscard]] std::vector<std::byte> read_block_data(uint8_t register_addr) const;
-  [[nodiscard]] inline std::vector<std::byte> read_block_data(
+  [[nodiscard]] std::vector<uint8_t> read_block_data(uint8_t register_addr) const;
+  [[nodiscard]] inline std::vector<uint8_t> read_block_data(
     uint16_t i2c_addr,
     uint8_t register_addr)
   {
@@ -115,42 +115,13 @@ public:
   /**
    * Send block data using the SMBus protocol.
    */
-  void write_block_data(uint8_t register_addr, const std::vector<std::byte> & data) const;
+  void write_block_data(uint8_t register_addr, const std::vector<uint8_t> & data) const;
   inline void write_block_data(
     uint16_t i2c_addr, uint8_t register_addr,
-    const std::vector<std::byte> & data)
+    const std::vector<uint8_t> & data)
   {
     set_i2c_device(i2c_addr);
     write_block_data(register_addr, data);
-  }
-
-  template<typename PODType>
-  void write_pod_data(uint16_t register_addr, const PODType & data)
-  {
-    I2CTransactionBuilderImplBuffed builder{cached_i2c_addr};
-
-    builder.add_write(register_addr, data);
-    builder.apply_transaction(this);
-  }
-
-  template<typename PODType>
-  void write_pod_data(uint16_t i2c_addr, uint16_t register_addr, const PODType & data)
-  {
-    set_i2c_device(i2c_addr);
-    write_pod_data(register_addr, data);
-  }
-
-  template<typename PODType>
-  PODType read_pod_data(uint16_t register_addr) const
-  {
-
-  }
-
-  template<typename PODType>
-  PODType read_pod_data(uint16_t i2c_addr, uint16_t register_addr)
-  {
-    set_i2c_device(i2c_addr);
-    return read_pod_data<PODType>(register_addr);
   }
 
   /**

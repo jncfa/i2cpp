@@ -106,6 +106,10 @@ void I2CHandlerImpl::process_i2c_transaction(std::vector<i2c_msg, Alloc> & messa
     throw IllegalOperationException("File descriptor is invalid");
   }
 
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_I2C)) {
+    throw IllegalOperationException("Adapter does not support this operation!");
+  }
+
   if (messages.size() > I2C_RDWR_IOCTL_MAX_MSGS) {
     throw IllegalOperationException(
             "I2C does not support this many messages in a single transaction");
@@ -118,6 +122,9 @@ void I2CHandlerImpl::process_i2c_transaction(std::vector<i2c_msg, Alloc> & messa
     throw SysException("Error executing ioctl request");
   }
 }
+
+template void I2CHandlerImpl::process_i2c_transaction(std::pmr::vector<i2c_msg> & messages) const;
+
 void I2CHandlerImpl::write_quick(const uint8_t value) const
 {
   // ensure we have a valid file descriptor
@@ -125,7 +132,7 @@ void I2CHandlerImpl::write_quick(const uint8_t value) const
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_QUICK)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_QUICK)) {
     throw IllegalOperationException("Adapter does not support this operation!");
   }
 
@@ -141,7 +148,7 @@ uint8_t I2CHandlerImpl::read_byte() const
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_READ_BYTE)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_READ_BYTE)) {
     throw IllegalOperationException("Adapter does not support this operation!");
   }
 
@@ -160,7 +167,7 @@ void I2CHandlerImpl::write_byte(const uint8_t value) const
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_WRITE_BYTE)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_WRITE_BYTE)) {
     throw IllegalOperationException("Adapter does not support this operation");
   }
 
@@ -169,14 +176,14 @@ void I2CHandlerImpl::write_byte(const uint8_t value) const
   }
 }
 
-uint8_t I2CHandlerImpl::read_byte(const uint16_t register_addr) const
+uint8_t I2CHandlerImpl::read_byte_at(const uint16_t register_addr) const
 {
   // ensure we have a valid file descriptor
   if (!is_opened()) {
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_READ_BYTE_DATA)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_READ_BYTE_DATA)) {
     throw IllegalOperationException("Adapter does not support this operation!");
   }
   const auto result = i2c_smbus_read_byte_data(i2c_file_desc, register_addr);
@@ -187,14 +194,14 @@ uint8_t I2CHandlerImpl::read_byte(const uint16_t register_addr) const
   return static_cast<uint8_t>(result);
 }
 
-void I2CHandlerImpl::write_byte(const uint16_t register_addr, const uint8_t value) const
+void I2CHandlerImpl::write_byte_at(const uint16_t register_addr, const uint8_t value) const
 {
   // ensure we have a valid file descriptor
   if (!is_opened()) {
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_WRITE_BYTE_DATA)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_WRITE_BYTE_DATA)) {
     throw IllegalOperationException("Adapter does not support this operation!");
   }
 
@@ -210,7 +217,7 @@ uint16_t I2CHandlerImpl::read_word(const uint16_t register_addr) const
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_READ_WORD_DATA)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_READ_WORD_DATA)) {
     throw IllegalOperationException("Adapter does not support this operation!");
   }
   const auto result = i2c_smbus_read_word_data(i2c_file_desc, register_addr);
@@ -229,7 +236,7 @@ void I2CHandlerImpl::write_word(const uint16_t register_addr, const uint16_t val
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_WRITE_WORD_DATA)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_WRITE_WORD_DATA)) {
     throw IllegalOperationException("Adapter does not support this operation!");
   }
 
@@ -245,7 +252,7 @@ uint16_t I2CHandlerImpl::process_call(const uint16_t register_addr, const uint16
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_PROC_CALL)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_PROC_CALL)) {
     throw IllegalOperationException("Adapter does not support this operation!");
   }
 
@@ -265,7 +272,7 @@ uint16_t I2CHandlerImpl::block_process_call(
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_BLOCK_PROC_CALL)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_BLOCK_PROC_CALL)) {
     throw IllegalOperationException("Adapter does not support this operation!");
   }
 
@@ -285,7 +292,7 @@ std::vector<uint8_t> I2CHandlerImpl::read_block_data(const uint8_t register_addr
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_READ_BLOCK_DATA)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_READ_BLOCK_DATA)) {
     throw IllegalOperationException("Adapter does not support this operation!");
   }
 
@@ -309,7 +316,7 @@ void I2CHandlerImpl::write_block_data(
     throw IllegalOperationException("File descriptor is invalid");
   }
 
-  if (!has_functionality(I2C_FUNC_SMBUS_WRITE_BLOCK_DATA)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_WRITE_BLOCK_DATA)) {
     throw IllegalOperationException("Adapter does not support this operation!");
   }
 
@@ -329,12 +336,29 @@ void I2CHandlerImpl::set_ten_bit(bool enable) const
   }
 
   // check if the adapter supports 10-bit addressing
-  if (!has_functionality(I2C_FUNC_10BIT_ADDR)) {
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_10BIT_ADDR)) {
     throw IllegalOperationException("Adapter does not support 10-bit addressing");
   }
 
-  if (ioctl(i2c_file_desc, I2C_TENBIT, enable ? 1 : 0) < 0) {
+  if (ioctl(i2c_file_desc, I2CIOControlCommands::TENBIT, enable ? 1 : 0) < 0) {
     throw SysException("Error setting 10-bit addressing");
+  }
+}
+
+void I2CHandlerImpl::set_pec(bool enable)
+{
+    // ensure we have a valid file descriptor
+  if (!is_opened()) {
+    throw IllegalOperationException("File descriptor is invalid");
+  }
+
+  // check if the adapter supports PEC addressing
+  if (!has_functionality(I2CControllerFunctionalityFlags::FUNC_SMBUS_PEC)) {
+    throw IllegalOperationException("Adapter does not support PEC");
+  }
+
+  if (ioctl(i2c_file_desc, I2CIOControlCommands::PEC, enable ? 1 : 0) < 0) {
+    throw SysException("Error setting PEC");
   }
 }
 

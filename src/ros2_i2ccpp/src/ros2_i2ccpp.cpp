@@ -5,7 +5,7 @@
 
 #include "ros2_i2ccpp/ros2_i2ccpp.hpp"
 #include "ros2_i2ccpp/exceptions.hpp"
-#include "ros2_i2ccpp/pmr_unique_ptr.hpp"
+#include "ros2_i2ccpp/pmr_shared_ptr.hpp"
 #include "ros2_i2ccpp/constants.hpp"
 #include "ros2_i2ccpp/transaction.hpp"
 

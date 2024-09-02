@@ -1,13 +1,15 @@
 #ifndef __I2C_HANDLER_HPP__
 #define __I2C_HANDLER_HPP__
-#include "ros2_i2ccpp/constants.hpp"
-#include <type_traits>
 #pragma once
 
 #include <cstdint>
 #include <mutex>
 #include <memory>
 #include <string>
+#include <type_traits>
+
+#include "ros2_i2ccpp/constants.hpp"
+#include "ros2_i2ccpp/transaction.hpp"
 
 namespace ros2_i2ccpp
 {
@@ -16,14 +18,12 @@ class I2CHandlerImpl;
 
 template<typename Mutex>
 class I2CHandler{
-  friend class I2CTransactionBuilderImpl;
-
   I2CHandler() = delete;
   I2CHandler(uint16_t i2c_addr, std::string i2c_adapter_path = "/dev/i2c-1");
   I2CHandler(std::string i2c_adapter_path);
 
   /**
-    * Get I2C adapter functionality, use I2C_FUNC_* constants to check what functionality is supported.
+    * Get I2C adapter functionality, use I2CControllerFunctionalityFlags constants to check what functionality is supported.
     */
   [[nodiscard]] uint64_t get_adapter_func() const;
 
@@ -49,17 +49,7 @@ class I2CHandler{
     return has_functionality((... | flags));
   }
 
-  /**
-   * Read data starting at a given offset.
-   */
-  template<typename PODType>
-  PODType read_data(uint16_t address, uint16_t offset) const;
-
-  /**
-   * Write data starting at a given offset.
-   */
-  template<typename PODType>
-  void write_data(uint16_t address, uint16_t offset, const PODType & data) const;
+  void apply_transaction(I2CTransaction && transaction) const;
 
   /**
     * Set ten bit functionality.
@@ -76,9 +66,6 @@ struct null_mutex
   void lock() {}
   void unlock() {}
 };
-
-template class I2CHandler<std::mutex>;
-template class I2CHandler<null_mutex>;
 
 using ThreadSafeI2CHandler = I2CHandler<std::mutex>;
 using ThreadUnsafeI2CHandler = I2CHandler<null_mutex>;

@@ -5,16 +5,20 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_compile_options(-std=c++20)
-
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
+find_package(TBB REQUIRED)
 
 add_library(ros2_i2ccpp src/ros2_i2ccpp.cpp src/transaction.cpp src/i2c_handler.cpp src/impl/i2c_handler_impl.cpp)
 add_library(ros2_i2ccpp::ros2_i2ccpp ALIAS ros2_i2ccpp)
+
+target_link_libraries(ros2_i2ccpp
+  PRIVATE
+  i2c
+  TBB::tbb
+)
+
 target_compile_features(ros2_i2ccpp PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 target_include_directories(ros2_i2ccpp PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

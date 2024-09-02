@@ -6,8 +6,9 @@
         "limitSymbolsToIncludedHeaders": false
       },
       "includePath": [
-        "/workspaces/ros2_i2ccpp/install/include/**",
+        "/workspaces/ros2_i2ccpp/install/ros2_i2ccpp/include/**",
         "/opt/ros/jazzy/include/**",
+        "/workspaces/ros2_i2ccpp/src/ros2_i2c/include/**",
         "/workspaces/ros2_i2ccpp/src/ros2_i2ccpp/include/**",
         "/usr/include/**"
       ],
@@ -15,7 +16,7 @@
       "intelliSenseMode": "gcc-arm64",
       "compilerPath": "/usr/bin/gcc",
       "cStandard": "gnu11",
-      "cppStandard": "c++20"
+      "cppStandard": "c++17"
     }
   ],
   "version": 4

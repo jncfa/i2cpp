@@ -10,11 +10,11 @@ namespace ros2_i2ccpp
 // Based on i2c.h, i2c-dev.c, i2c-dev.h and the documentation at https://www.kernel.org/doc/Documentation/i2c
 // and https://ftp.rtems.org/pub/rtems/releases/5/5.1/docs/html/doxygen/group__I2CLinux.html
 
-// Maximum count of messages for one IO control call.
-static constexpr auto _I2C_RDWR_IOCTL_MAX_MSGS = 42;
-
-// Maximum SMBus data block count.
-static constexpr auto _I2C_SMBUS_BLOCK_MAX = 32;
+enum I2CConstants: int
+{
+  I2C_TRANSACTION_IOCTL_MAX_MSGS = 42,
+  SMBUS_BLOCK_MAX = 32
+};
 
 /**
  * Flags that indicate the functionality of a given I2C controller.
