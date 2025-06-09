@@ -3,3 +3,5 @@ install/*
 log/*
 site/*
 .env
+cmake-build-debug/
+cmake-build-release/

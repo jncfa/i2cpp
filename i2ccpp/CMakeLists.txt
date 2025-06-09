@@ -29,7 +29,7 @@ target_include_directories(ros2_i2ccpp PUBLIC
 target_compile_definitions(ros2_i2ccpp PRIVATE "ROS2_I2CCPP_BUILDING_LIBRARY")
 
 install(
-  DIRECTORY include/
+  DIRECTORY include
   DESTINATION include/${PROJECT_NAME}
 )
 install(
