@@ -2,5 +2,6 @@
 
 source /opt/ros/kilted/setup.bash
 
-# if the local env file exists, source it
-echo "${0}, ${1}"
+if [ -f install/local_setup.bash ]; then
+  source install/local_setup.bash
+fi
