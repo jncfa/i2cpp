@@ -1,3 +1,8 @@
+// Copyright (c) 2024 jncfa
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 #ifndef __I2C_HANDLER_HPP__
 #define __I2C_HANDLER_HPP__
 #pragma once
@@ -19,8 +24,8 @@ class I2CHandlerImpl;
 template<typename Mutex>
 class I2CHandler{
   I2CHandler() = delete;
-  I2CHandler(uint16_t i2c_addr, std::string i2c_adapter_path = "/dev/i2c-1");
-  I2CHandler(std::string i2c_adapter_path);
+  explicit I2CHandler(uint16_t i2c_addr, std::string i2c_adapter_path = "/dev/i2c-1");
+  explicit I2CHandler(std::string i2c_adapter_path);
 
   /**
     * Get I2C adapter functionality, use I2CControllerFunctionalityFlags constants to check what functionality is supported.

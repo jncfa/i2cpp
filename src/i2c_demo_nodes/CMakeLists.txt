@@ -14,7 +14,7 @@ find_package(ros2_i2ccpp REQUIRED)
 
 add_executable(testnode src/testnode.cpp)
 
-ament_target_dependencies(testnode 
+ament_target_dependencies(testnode
 ros2_i2ccpp)
 
 target_include_directories(testnode PUBLIC

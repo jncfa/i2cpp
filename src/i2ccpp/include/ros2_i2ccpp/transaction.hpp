@@ -1,3 +1,8 @@
+// Copyright (c) 2024 jncfa
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 #ifndef ROS2_I2CCPP_TRANSACTION_HPP_
 #define ROS2_I2CCPP_TRANSACTION_HPP_
 #pragma once
@@ -21,7 +26,7 @@ namespace ros2_i2ccpp
 
 class I2CTransactionSegment{
 public:
-  I2CTransactionSegment(uint16_t address_)
+  explicit I2CTransactionSegment(uint16_t address_)
   : address(address_) {}
   virtual ~I2CTransactionSegment() = default;
 
@@ -51,7 +56,7 @@ class I2CReadTransactionSegment : public I2CTransactionSegment {
 
 public:
   template<typename ...MessageFlagsT>
-  I2CReadTransactionSegment(
+  explicit I2CReadTransactionSegment(
     uint16_t address_, PODType & data_,
     MessageFlagsT... flags)
   : I2CTransactionSegment(address_), data(data_),
@@ -89,7 +94,7 @@ class I2CWriteTransactionSegment : public I2CTransactionSegment {
 
 public:
   template<typename ...MessageFlagsT>
-  I2CWriteTransactionSegment(
+  explicit I2CWriteTransactionSegment(
     uint16_t address_, const PODType data_,
     MessageFlagsT... flags)
   : I2CTransactionSegment(address_), buffer(bit_cast<std::array<uint8_t, sizeof(PODType)>>(data_))
@@ -115,7 +120,7 @@ class I2CTransaction{
 public:
   // need to fulfill rule of 5
 
-  I2CTransaction(
+  explicit I2CTransaction(
     std::pmr::memory_resource & mr,
     std::pmr::vector<std::shared_ptr<I2CTransactionSegment>> && messages)
   :mem_resource(mr), transaction_segments(std::move(messages)) {}
@@ -156,7 +161,7 @@ private:
  */
 class I2CTransactionBuilderImpl {
 public:
-  I2CTransactionBuilderImpl(std::pmr::memory_resource & mr, uint16_t device_address_)
+  explicit I2CTransactionBuilderImpl(std::pmr::memory_resource & mr, uint16_t device_address_)
   : device_address(device_address_), transaction_segments(&mr), mem_resource(mr) {}
 
   template<typename PODType, typename ...MessageFlagsT>
@@ -262,7 +267,7 @@ private:
 template<uint32_t array_size = 10'000>
 class I2CTransactionBuilderSingleShot : public I2CTransactionBuilderImpl {
 public:
-  I2CTransactionBuilderSingleShot(uint16_t device_address_)
+  explicit I2CTransactionBuilderSingleShot(uint16_t device_address_)
   : I2CTransactionBuilderImpl(mbr, device_address_) {}
 
 private:
@@ -273,7 +278,9 @@ private:
 template<uint32_t array_size = 10'000>
 class I2CTransactionBuilderPooled : public I2CTransactionBuilderImpl {
 public:
-  I2CTransactionBuilderPooled(uint16_t device_address_, std::pmr::pool_options options = {})
+  explicit I2CTransactionBuilderPooled(
+    uint16_t device_address_,
+    std::pmr::pool_options options = {})
   : pool_mr(options, &mbr), I2CTransactionBuilderImpl(pool_mr, device_address_) {}
 
 private:
@@ -287,8 +294,8 @@ private:
  */
 class I2CTransactionBuilder : public I2CTransactionBuilderImpl {
 public:
-  I2CTransactionBuilder(uint16_t device_address_)
+  explicit I2CTransactionBuilder(uint16_t device_address_)
   : I2CTransactionBuilderImpl(*std::pmr::get_default_resource(), device_address_) {}
 };
-}
+} // namespace ros2_i2ccpp
 #endif // ROS2_I2CCPP_TRANSACTION_HPP_

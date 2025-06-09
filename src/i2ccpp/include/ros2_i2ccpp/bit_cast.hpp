@@ -1,3 +1,8 @@
+// Copyright (c) 2024 jncfa
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 #pragma once
 #include <type_traits>
 #include <cstring>
@@ -38,7 +43,7 @@ template<class To, class From>
 #if (__has_builtin(__builtin_bit_cast))
   return __builtin_bit_cast(To, a);
 #else
-  static_assert(sizeof(T) == sizeof(U));
+  static_assert(sizeof(T) == sizeof(U));  //  At least two spaces is best between code and comments
 
   T result;
   std::memcpy(&result, &a, sizeof(T));
@@ -46,4 +51,4 @@ template<class To, class From>
 #endif
 }
 
-}
+} // namespace ros2_i2ccpp

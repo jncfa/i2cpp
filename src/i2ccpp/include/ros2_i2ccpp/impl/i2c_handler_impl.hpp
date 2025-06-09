@@ -1,17 +1,18 @@
-#ifndef __I2C_HANDLER_IMPL_HPP__
-#define __I2C_HANDLER_IMPL_HPP__
-#include <memory>
-#pragma once
+// Copyright 2024 jncfa
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
 
-extern "C"
-{
+#ifndef ROS2_I2CCPP__IMPL__I2C_HANDLER_IMPL_HPP_
+#define ROS2_I2CCPP__IMPL__I2C_HANDLER_IMPL_HPP_
+
 #include <linux/i2c.h>
-}
 
-#include <cstdint>
-#include <vector>
-#include <string>
 #include <bit>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "ros2_i2ccpp/transaction.hpp"
 
@@ -20,8 +21,8 @@ namespace ros2_i2ccpp
 
 class I2CHandlerImpl{
 public:
-  I2CHandlerImpl(uint16_t i2c_addr, std::string i2c_adapter_path = "/dev/i2c-1");
-  I2CHandlerImpl(std::string i2c_adapter_path);
+  explicit I2CHandlerImpl(uint16_t i2c_addr, std::string i2c_adapter_path = "/dev/i2c-1");
+  explicit I2CHandlerImpl(std::string i2c_adapter_path);
   ~I2CHandlerImpl();
 
   [[nodiscard]] inline bool is_opened() const {return i2c_file_desc != INVALID_FILE_DESC;}
@@ -183,6 +184,6 @@ private:
   uint64_t adapter_func{0};
 };
 
-}
+} // namespace ros2_i2ccpp
 
-#endif // __I2C_HANDLER_IMPL_HPP__
+#endif  // ROS2_I2CCPP__IMPL__I2C_HANDLER_IMPL_HPP_

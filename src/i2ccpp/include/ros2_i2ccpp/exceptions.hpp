@@ -6,9 +6,10 @@
 #ifndef ROS2_I2CCPP__EXCEPTIONS_HPP_
 #define ROS2_I2CCPP__EXCEPTIONS_HPP_
 
-#include <stdexcept>
 #include <errno.h>
+#include <stdexcept>
 #include <system_error>
+#include <string>
 
 namespace ros2_i2ccpp::exceptions
 {
@@ -22,12 +23,12 @@ class SysException : public std::system_error
 public:
   using system_error::system_error;
 
-  SysException(std::string what)
+  explicit SysException(std::string what)
   : system_error(error_code_from_errno(errno), what)
   {
   }
 
-  SysException(std::string what, int error_code)
+  explicit SysException(std::string what, int error_code)
   : system_error(error_code_from_errno(error_code), what) {}
 
   static std::error_code error_code_from_errno(int errno_code)

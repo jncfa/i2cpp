@@ -1,8 +1,13 @@
+// Copyright (c) 2024 jncfa
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 #include "ros2_i2ccpp/i2c_handler.hpp"
 #include "ros2_i2ccpp/impl/i2c_handler_impl.hpp"
+#include <algorithm>
 #include <memory>
 #include <mutex>
-#include <algorithm>
 
 namespace ros2_i2ccpp
 {
@@ -11,16 +16,13 @@ template<typename Mutex>
 I2CHandler<Mutex>::I2CHandler(uint16_t i2c_addr, std::string i2c_adapter_path)
 : handler(std::make_unique<I2CHandlerImpl>(i2c_addr, i2c_adapter_path))
 {
-
 }
 
 template<typename Mutex>
 I2CHandler<Mutex>::I2CHandler(std::string i2c_adapter_path)
 : handler(std::make_unique<I2CHandlerImpl>(i2c_adapter_path))
 {
-
 }
-
 
 template<typename Mutex>
 uint64_t I2CHandler<Mutex>::get_adapter_func() const
@@ -76,4 +78,4 @@ void I2CHandler<Mutex>::apply_transaction(I2CTransaction && transaction_) const
 template class I2CHandler<std::mutex>;
 template class I2CHandler<null_mutex>;
 
-}
+} // namespace ros2_i2ccpp

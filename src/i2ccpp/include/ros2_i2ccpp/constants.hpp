@@ -1,3 +1,8 @@
+// Copyright (c) 2024 jncfa
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 #ifndef ROS2_I2CCPP_CONSTANTS_HPP_
 #define ROS2_I2CCPP_CONSTANTS_HPP_
 #pragma once
@@ -80,10 +85,8 @@ enum I2CIOControlCommands: uint64_t
   FUNCS = 0x705, // Gets the I2C controller functionality information.
   RDWR = 0x707, // Performs a combined read/write transfer.
   PEC = 0x708, // Enables System Management Bus (SMBus) Packet Error Checking (PEC) if argument is non-zero, otherwise disables PEC.
-
 };
 
 }  // namespace ros2_i2ccpp
-
 
 #endif // ROS2_I2CCPP_CONSTANTS_HPP_

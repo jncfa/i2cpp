@@ -9,20 +9,6 @@
 #include "ros2_i2ccpp/constants.hpp"
 #include "ros2_i2ccpp/transaction.hpp"
 
-#include <algorithm>
-#include <array>
-#include <cassert>
-#include <cstdint>
-#include <iterator>
-#include <memory>
-#include <memory_resource>
-#include <mutex>
-#include <sys/types.h>
-#include <type_traits>
-#include <vector>
-#include <optional>
-#include <execution>
-
 extern "C"
 {
 #include <fcntl.h>  //open
@@ -32,3 +18,17 @@ extern "C"
 #include <i2c/smbus.h>
 #include <sys/ioctl.h>
 }
+
+#include <sys/types.h>
+#include <algorithm>
+#include <array>
+#include <cassert>
+#include <cstdint>
+#include <iterator>
+#include <memory>
+#include <memory_resource>
+#include <mutex>
+#include <type_traits>
+#include <vector>
+#include <optional>
+#include <execution>
